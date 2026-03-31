@@ -1,0 +1,74 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="mb-5">
+  <h1 class="page-title">Job Match</h1>
+  <p class="page-subtitle">Enter your skills and see which jobs you're best suited for.</p>
+</div>
+
+<!-- Skills Input Card -->
+<div class="skills-input-card">
+  <form method="POST">
+    <label class="skills-input-label">Your Skills</label>
+    <div class="d-flex gap-3">
+      <input type="text" name="skills"
+        class="form-control form-control-lg"
+        placeholder="e.g. Python, SQL, Flask, JavaScript"
+        value="{{ user_skills }}"
+        style="border-radius:0.75rem; border:1px solid #dae2fd; flex:1;" />
+      <button type="submit" class="btn btn-primary btn-action-primary px-4" style="white-space:nowrap;">
+        Find Matches
+      </button>
+    </div>
+    <p class="text-muted-custom" style="font-size:0.8rem; margin-top:0.5rem;">Separate skills with commas</p>
+  </form>
+</div>
+
+{% if results %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h3 class="section-heading">
+    Matching Jobs <span class="text-muted-custom" style="font-weight:500;">({{ results|length }} found)</span>
+  </h3>
+</div>
+
+<div style="display:flex; flex-direction:column; gap:1rem;">
+  {% for r in results %}
+  {% set level = 'high' if r.percent >= 75 else ('medium' if r.percent >= 50 else 'low') %}
+  <div class="match-card">
+    <div class="d-flex justify-content-between align-items-start">
+      <div class="d-flex align-items-center gap-3">
+        <div class="table-avatar">{{ r.job_title[0] }}</div>
+        <div>
+          <div class="modal-title-custom" style="font-size:1rem;">{{ r.job_title }}</div>
+          <div class="text-sub">{{ r.company_name }}</div>
+        </div>
+      </div>
+      <div style="text-align:right;">
+        <div class="match-percent match-percent-{{ level }}">{{ r.percent }}%</div>
+        <div class="text-micro">{{ r.matched|length }}/{{ r.total }} skills</div>
+      </div>
+    </div>
+
+    <div class="match-progress">
+      <div class="match-progress-bar match-progress-bar-{{ level }}" style="width:{{ r.percent }}%;"></div>
+    </div>
+
+    <div class="d-flex flex-wrap gap-2">
+      {% for s in r.matched %}
+      <span class="skill-pill skill-pill-matched">&#10003; {{ s }}</span>
+      {% endfor %}
+      {% for s in r.missing %}
+      <span class="skill-pill skill-pill-missing">&#10007; {{ s }}</span>
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% elif request.method == 'POST' %}
+<div class="no-match-card">
+  <span class="material-symbols-outlined" style="font-size:3rem; color:#dae2fd; display:block; margin-bottom:1rem;">search_off</span>
+  No matches found. Make sure your jobs have requirements and try different skills.
+</div>
+{% endif %}
+
+{% endblock %}
