@@ -18,34 +18,6 @@ USE `job_tracker`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `application_summary`
---
-
-DROP TABLE IF EXISTS `application_summary`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `application_summary` (
-  `summary_id` int NOT NULL AUTO_INCREMENT,
-  `company_name` varchar(100) DEFAULT NULL,
-  `total_jobs` int DEFAULT NULL,
-  `total_applications` int DEFAULT NULL,
-  `avg_salary` decimal(10,2) DEFAULT NULL,
-  `last_updated` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`summary_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `application_summary`
---
-
-LOCK TABLES `application_summary` WRITE;
-/*!40000 ALTER TABLE `application_summary` DISABLE KEYS */;
-INSERT INTO `application_summary` VALUES (1,'Tech Solutions Inc',4,1,65000.00,'2026-03-22 16:45:52'),(2,'Data Analytics Corp',4,1,61250.00,'2026-03-22 16:45:52'),(3,'Cloud Systems LLC',3,1,78333.33,'2026-03-22 16:45:52'),(4,'Digital Innovations',4,3,67400.00,'2026-03-22 16:45:52'),(5,'Smart Tech Group',2,1,90000.00,'2026-03-22 16:45:52'),(6,'New Tech Corp',1,0,120000.00,'2026-03-22 16:45:52');
-/*!40000 ALTER TABLE `application_summary` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `applications`
 --
 
@@ -60,11 +32,12 @@ CREATE TABLE `applications` (
   `resume_version` varchar(50) DEFAULT NULL,
   `cover_letter_sent` tinyint(1) DEFAULT '0',
   `interview_data` json DEFAULT NULL,
+  `interview_data` json DEFAULT NULL,
   PRIMARY KEY (`application_id`),
   KEY `job_id` (`job_id`),
   KEY `idx_app_status` (`status`),
   CONSTRAINT `applications_ibfk_1` FOREIGN KEY (`job_id`) REFERENCES `jobs` (`job_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -95,7 +68,7 @@ CREATE TABLE `companies` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`company_id`),
   KEY `idx_company_industry` (`industry`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -118,7 +91,8 @@ DROP TABLE IF EXISTS `contacts`;
 CREATE TABLE `contacts` (
   `contact_id` int NOT NULL AUTO_INCREMENT,
   `company_id` int NOT NULL,
-  `contact_name` varchar(100) NOT NULL,
+  `first_name` varchar(50) NOT NULL,
+  `last_name` varchar(50) NOT NULL,
   `email` varchar(100) DEFAULT NULL,
   `phone` varchar(20) DEFAULT NULL,
   `job_title` varchar(100) DEFAULT NULL,
@@ -136,7 +110,7 @@ CREATE TABLE `contacts` (
 
 LOCK TABLES `contacts` WRITE;
 /*!40000 ALTER TABLE `contacts` DISABLE KEYS */;
-INSERT INTO `contacts` VALUES (1,1,'','sjohnson@techsolutions.com',NULL,'HR Manager',NULL,NULL),(2,2,'','mchen@dataanalytics.com',NULL,'Technical\nRecruiter',NULL,NULL),(3,3,'','ewilliams@cloudsystems.com',NULL,'Hiring\nManager',NULL,NULL),(4,4,'',NULL,NULL,'Senior Developer',NULL,NULL),(5,5,'','lgarcia@smarttech.com',NULL,'Talent\nAcquisition',NULL,NULL),(7,4,'','rkim@digitalinnovations.com',NULL,'Engineering Manager',NULL,NULL);
+INSERT INTO `contacts` VALUES (1,1,'Sarah','Johnson','sjohnson@techsolutions.com','555-0101','HR Manager',NULL,NULL),(2,2,'Michael','Chen','mchen@dataanalytics.com','555-0102','Technical Recruiter',NULL,NULL),(3,3,'Emily','Williams','ewilliams@cloudsystems.com','555-0103','Hiring Manager',NULL,NULL),(4,4,'David','Park',NULL,'555-0104','Senior Developer',NULL,NULL),(5,5,'Lisa','Garcia','lgarcia@smarttech.com','555-0105','Talent Acquisition',NULL,NULL),(7,4,'Rachel','Kim','rkim@digitalinnovations.com','555-0106','Engineering Manager',NULL,NULL);
 /*!40000 ALTER TABLE `contacts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -162,7 +136,7 @@ CREATE TABLE `jobs` (
   KEY `idx_job_title` (`job_title`),
   KEY `idx_company_type` (`company_id`,`job_type`),
   CONSTRAINT `jobs_ibfk_1` FOREIGN KEY (`company_id`) REFERENCES `companies` (`company_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -184,4 +158,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-03-22 16:03:59
+-- Dump completed on 2026-03-31 18:57:02
