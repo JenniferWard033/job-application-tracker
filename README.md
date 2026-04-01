@@ -41,7 +41,7 @@ pip install -r requirements.txt
 
 ### 4. Configure the database connection
 
-Open `database.py` and update the credentials to match your MySQL setup. You will need to update the password with your password:
+Open `database.py` and update the credentials to match your MySQL setup. You will need to update the password with your password (If you do not update with your password the program won't run and access the database):
 
 ```python
 def get_db():
