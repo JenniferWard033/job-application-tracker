@@ -20,7 +20,9 @@ def dashboard():
     company_count = cursor.fetchone()['count']
 
     cursor.execute('SELECT status, COUNT(*) as count FROM applications GROUP BY status')
-    status_counts = {row['status']: row['count'] for row in cursor.fetchall()}
+    status_counts = {}
+    for row in cursor.fetchall():
+        status_counts[row['status']] = row['count']
 
     cursor.execute('''
         SELECT a.application_date, a.status, j.job_title, c.company_name
@@ -42,7 +44,7 @@ def dashboard():
 
     return render_template('dashboard.html', stats=stats, status_counts=status_counts, recent=recent)
 
-# ─── COMPANIES ───────────────────────────────────────────
+# Companies
 
 @app.route('/companies')
 def companies():
@@ -93,7 +95,7 @@ def edit_company(id):
     conn.close()
     return redirect('/companies')
 
-@app.route('/companies/delete/<int:id>')
+@app.route('/companies/delete/<int:id>', methods=['POST'])
 def delete_company(id):
     conn = get_db()
     cursor = conn.cursor()
@@ -102,7 +104,7 @@ def delete_company(id):
     conn.close()
     return redirect('/companies')
 
-# ─── JOBS ────────────────────────────────────────────────
+# Jobs
 
 @app.route('/jobs')
 def jobs():
@@ -163,7 +165,7 @@ def edit_job(id):
     conn.close()
     return redirect('/jobs')
 
-@app.route('/jobs/delete/<int:id>')
+@app.route('/jobs/delete/<int:id>', methods=['POST'])
 def delete_job(id):
     conn = get_db()
     cursor = conn.cursor()
@@ -172,7 +174,7 @@ def delete_job(id):
     conn.close()
     return redirect('/jobs')
 
-# ─── APPLICATIONS ────────────────────────────────────────
+# Applications
 
 @app.route('/applications')
 def applications():
@@ -235,7 +237,7 @@ def edit_application(id):
     conn.close()
     return redirect('/applications')
 
-@app.route('/applications/delete/<int:id>')
+@app.route('/applications/delete/<int:id>', methods=['POST'])
 def delete_application(id):
     conn = get_db()
     cursor = conn.cursor()
@@ -244,7 +246,7 @@ def delete_application(id):
     conn.close()
     return redirect('/applications')
 
-# ─── CONTACTS ────────────────────────────────────────────
+# Contacts
 
 @app.route('/contacts')
 def contacts():
@@ -254,7 +256,7 @@ def contacts():
         SELECT ct.*, c.company_name
         FROM contacts ct
         LEFT JOIN companies c ON ct.company_id = c.company_id
-        ORDER BY ct.contact_name
+        ORDER BY ct.last_name
     ''')
     all_contacts = cursor.fetchall()
     cursor.execute('SELECT company_id, company_name FROM companies ORDER BY company_name')
@@ -267,11 +269,12 @@ def add_contact():
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute('''
-        INSERT INTO contacts (company_id, contact_name, job_title, email, phone, linkedin_url, notes)
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        INSERT INTO contacts (company_id, first_name, last_name, job_title, email, phone, linkedin_url, notes)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
     ''', (
         request.form['company_id'],
-        request.form['contact_name'],
+        request.form['first_name'],
+        request.form['last_name'],
         request.form['job_title'],
         request.form['email'],
         request.form['phone'],
@@ -288,12 +291,13 @@ def edit_contact(id):
     cursor = conn.cursor()
     cursor.execute('''
         UPDATE contacts
-        SET company_id=%s, contact_name=%s, job_title=%s,
+        SET company_id=%s, first_name=%s, last_name=%s, job_title=%s,
             email=%s, phone=%s, linkedin_url=%s, notes=%s
         WHERE contact_id=%s
     ''', (
         request.form['company_id'],
-        request.form['contact_name'],
+        request.form['first_name'],
+        request.form['last_name'],
         request.form['job_title'],
         request.form['email'],
         request.form['phone'],
@@ -305,7 +309,7 @@ def edit_contact(id):
     conn.close()
     return redirect('/contacts')
 
-@app.route('/contacts/delete/<int:id>')
+@app.route('/contacts/delete/<int:id>', methods=['POST'])
 def delete_contact(id):
     conn = get_db()
     cursor = conn.cursor()
@@ -314,7 +318,7 @@ def delete_contact(id):
     conn.close()
     return redirect('/contacts')
 
-# ─── JOB MATCH ───────────────────────────────────────────
+# Job Match
 
 @app.route('/job-match', methods=['GET', 'POST'])
 def job_match():
@@ -322,7 +326,10 @@ def job_match():
     user_skills = ''
     if request.method == 'POST':
         user_skills = request.form['skills']
-        skill_list = [s.strip().lower() for s in user_skills.split(',') if s.strip()]
+        skill_list = []
+        for s in user_skills.split(','):
+            if s.strip():
+                skill_list.append(s.strip().lower())
 
         conn = get_db()
         cursor = conn.cursor()
@@ -345,9 +352,19 @@ def job_match():
             if not reqs:
                 continue
 
-            req_lower = [r.strip().lower() for r in reqs]
-            matched = [s for s in skill_list if s in req_lower]
-            missing = [r for r in req_lower if r not in skill_list]
+            req_lower = []
+            for r in reqs:
+                req_lower.append(r.strip().lower())
+
+            matched = []
+            for s in skill_list:
+                if s in req_lower:
+                    matched.append(s)
+
+            missing = []
+            for r in req_lower:
+                if r not in skill_list:
+                    missing.append(r)
             total = len(req_lower)
             percent = round((len(matched) / total) * 100) if total > 0 else 0
 
