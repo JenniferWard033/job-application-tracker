@@ -32,7 +32,6 @@ CREATE TABLE `applications` (
   `resume_version` varchar(50) DEFAULT NULL,
   `cover_letter_sent` tinyint(1) DEFAULT '0',
   `interview_data` json DEFAULT NULL,
-  `interview_data` json DEFAULT NULL,
   PRIMARY KEY (`application_id`),
   KEY `job_id` (`job_id`),
   KEY `idx_app_status` (`status`),
