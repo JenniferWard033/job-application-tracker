@@ -1,7 +1,5 @@
 {% extends "base.html" %} {% block content %}
 
-{% set total = stats.applications %}
-{% set statuses = ['Applied', 'Screening', 'Interview', 'Offer', 'Rejected', 'Withdrawn'] %}
 
 <!-- Page Header -->
 <div class="page-header mb-5">
@@ -14,24 +12,39 @@
 
 <!-- Stat Cards -->
 <div class="row g-4 mb-5">
-  {% set cards = [
-    ('assignment_ind', 'blue', 'Total Applications', stats.applications),
-    ('analytics', 'slate', 'Jobs Tracked', stats.jobs),
-    ('business', 'orange', 'Companies', stats.companies)
-  ] %}
-  {% for icon, color, label, value in cards %}
   <div class="col-md-4">
     <div class="stat-card">
       <div class="d-flex justify-content-between align-items-start">
-        <div class="stat-icon stat-icon-{{ color }}">
-          <span class="material-symbols-outlined">{{ icon }}</span>
+        <div class="stat-icon stat-icon-blue">
+          <span class="material-symbols-outlined">assignment_ind</span>
         </div>
       </div>
-      <p class="stat-label">{{ label }}</p>
-      <div class="stat-value stat-value-{{ color }}">{{ value }}</div>
+      <p class="stat-label">Total Applications</p>
+      <div class="stat-value stat-value-blue">{{ stats.applications }}</div>
     </div>
   </div>
-  {% endfor %}
+  <div class="col-md-4">
+    <div class="stat-card">
+      <div class="d-flex justify-content-between align-items-start">
+        <div class="stat-icon stat-icon-slate">
+          <span class="material-symbols-outlined">analytics</span>
+        </div>
+      </div>
+      <p class="stat-label">Jobs Tracked</p>
+      <div class="stat-value stat-value-slate">{{ stats.jobs }}</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="stat-card">
+      <div class="d-flex justify-content-between align-items-start">
+        <div class="stat-icon stat-icon-orange">
+          <span class="material-symbols-outlined">business</span>
+        </div>
+      </div>
+      <p class="stat-label">Companies</p>
+      <div class="stat-value stat-value-orange">{{ stats.companies }}</div>
+    </div>
+  </div>
 </div>
 
 <!-- Pipeline Breakdown -->
@@ -40,16 +53,38 @@
     <h3 class="section-heading">Application Pipeline Breakdown</h3>
   </div>
   <div class="pipeline-container">
-    {% if total > 0 %}
+    {% if stats.applications > 0 %}
     <div class="pipeline-bar">
-      {% for status in statuses %}
-      {% set count = status_counts.get(status, 0) %}
-      {% if count > 0 %}
-      <div class="pipeline-bar-segment seg-{{ status|lower }}" style="width:{{ (count / total * 100)|int }}%">
-        <span>{{ status }} ({{ count }})</span>
+      {% if status_counts.get('Applied', 0) > 0 %}
+      <div class="pipeline-bar-segment seg-applied" style="width:{{ (status_counts.get('Applied', 0) / stats.applications * 100)|int }}%">
+        <span>Applied ({{ status_counts.get('Applied', 0) }})</span>
       </div>
       {% endif %}
-      {% endfor %}
+      {% if status_counts.get('Screening', 0) > 0 %}
+      <div class="pipeline-bar-segment seg-screening" style="width:{{ (status_counts.get('Screening', 0) / stats.applications * 100)|int }}%">
+        <span>Screening ({{ status_counts.get('Screening', 0) }})</span>
+      </div>
+      {% endif %}
+      {% if status_counts.get('Interview', 0) > 0 %}
+      <div class="pipeline-bar-segment seg-interview" style="width:{{ (status_counts.get('Interview', 0) / stats.applications * 100)|int }}%">
+        <span>Interview ({{ status_counts.get('Interview', 0) }})</span>
+      </div>
+      {% endif %}
+      {% if status_counts.get('Offer', 0) > 0 %}
+      <div class="pipeline-bar-segment seg-offer" style="width:{{ (status_counts.get('Offer', 0) / stats.applications * 100)|int }}%">
+        <span>Offer ({{ status_counts.get('Offer', 0) }})</span>
+      </div>
+      {% endif %}
+      {% if status_counts.get('Rejected', 0) > 0 %}
+      <div class="pipeline-bar-segment seg-rejected" style="width:{{ (status_counts.get('Rejected', 0) / stats.applications * 100)|int }}%">
+        <span>Rejected ({{ status_counts.get('Rejected', 0) }})</span>
+      </div>
+      {% endif %}
+      {% if status_counts.get('Withdrawn', 0) > 0 %}
+      <div class="pipeline-bar-segment seg-withdrawn" style="width:{{ (status_counts.get('Withdrawn', 0) / stats.applications * 100)|int }}%">
+        <span>Withdrawn ({{ status_counts.get('Withdrawn', 0) }})</span>
+      </div>
+      {% endif %}
     </div>
     {% else %}
     <div class="pipeline-bar" style="background:#e2e7ff;">
@@ -58,14 +93,42 @@
     {% endif %}
 
     <div class="row g-3">
-      {% for status in statuses %}
       <div class="col-6 col-md-4 col-lg-2">
-        <div class="status-mini-card border-{{ status|lower }}">
-          <p class="status-mini-label text-{{ status|lower }}">{{ status }}</p>
-          <p class="status-mini-value">{{ status_counts.get(status, 0) }}</p>
+        <div class="status-mini-card border-applied">
+          <p class="status-mini-label text-applied">Applied</p>
+          <p class="status-mini-value">{{ status_counts.get('Applied', 0) }}</p>
         </div>
       </div>
-      {% endfor %}
+      <div class="col-6 col-md-4 col-lg-2">
+        <div class="status-mini-card border-screening">
+          <p class="status-mini-label text-screening">Screening</p>
+          <p class="status-mini-value">{{ status_counts.get('Screening', 0) }}</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-4 col-lg-2">
+        <div class="status-mini-card border-interview">
+          <p class="status-mini-label text-interview">Interview</p>
+          <p class="status-mini-value">{{ status_counts.get('Interview', 0) }}</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-4 col-lg-2">
+        <div class="status-mini-card border-offer">
+          <p class="status-mini-label text-offer">Offer</p>
+          <p class="status-mini-value">{{ status_counts.get('Offer', 0) }}</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-4 col-lg-2">
+        <div class="status-mini-card border-rejected">
+          <p class="status-mini-label text-rejected">Rejected</p>
+          <p class="status-mini-value">{{ status_counts.get('Rejected', 0) }}</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-4 col-lg-2">
+        <div class="status-mini-card border-withdrawn">
+          <p class="status-mini-label text-withdrawn">Withdrawn</p>
+          <p class="status-mini-value">{{ status_counts.get('Withdrawn', 0) }}</p>
+        </div>
+      </div>
     </div>
   </div>
 </section>

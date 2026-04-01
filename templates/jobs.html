@@ -66,11 +66,11 @@
               data-date="{{ j.date_posted or '' }}">
               <span class="material-symbols-outlined">edit</span>
             </button>
-            <a href="/jobs/delete/{{ j.job_id }}"
-              class="action-btn action-btn-delete"
-              onclick="return confirm('Delete this job?');">
-              <span class="material-symbols-outlined">delete</span>
-            </a>
+            <form method="POST" action="/jobs/delete/{{ j.job_id }}" onsubmit="return confirm('Delete this job?');">
+              <button type="submit" class="action-btn action-btn-delete">
+                <span class="material-symbols-outlined">delete</span>
+              </button>
+            </form>
           </div>
         </td>
       </tr>

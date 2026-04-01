@@ -58,11 +58,11 @@
               data-coverletter="{{ a.cover_letter_sent }}">
               <span class="material-symbols-outlined">edit</span>
             </button>
-            <a href="/applications/delete/{{ a.application_id }}"
-              class="action-btn action-btn-delete"
-              onclick="return confirm('Delete this application?');">
-              <span class="material-symbols-outlined">delete</span>
-            </a>
+            <form method="POST" action="/applications/delete/{{ a.application_id }}" onsubmit="return confirm('Delete this application?');">
+              <button type="submit" class="action-btn action-btn-delete">
+                <span class="material-symbols-outlined">delete</span>
+              </button>
+            </form>
           </div>
         </td>
       </tr>

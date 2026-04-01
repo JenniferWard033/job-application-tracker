@@ -29,8 +29,8 @@
       <tr>
         <td>
           <div class="d-flex align-items-center gap-3">
-            <div class="table-avatar">{{ (ct.contact_name or '?')[0] }}</div>
-            <span class="text-bold">{{ ct.contact_name }}</span>
+            <div class="table-avatar">{{ ct.first_name[0] }}</div>
+            <span class="text-bold">{{ ct.first_name }} {{ ct.last_name }}</span>
           </div>
         </td>
         <td><span class="tag-pill tag-pill-slate">{{ ct.job_title or '—' }}</span></td>
@@ -47,7 +47,8 @@
               data-bs-toggle="modal" data-bs-target="#editModal"
               data-id="{{ ct.contact_id }}"
               data-company="{{ ct.company_id }}"
-              data-name="{{ ct.contact_name }}"
+              data-firstname="{{ ct.first_name }}"
+              data-lastname="{{ ct.last_name }}"
               data-jobtitle="{{ ct.job_title or '' }}"
               data-email="{{ ct.email or '' }}"
               data-phone="{{ ct.phone or '' }}"
@@ -55,11 +56,11 @@
               data-notes="{{ ct.notes or '' }}">
               <span class="material-symbols-outlined">edit</span>
             </button>
-            <a href="/contacts/delete/{{ ct.contact_id }}"
-              class="action-btn action-btn-delete"
-              onclick="return confirm('Delete this contact?');">
-              <span class="material-symbols-outlined">delete</span>
-            </a>
+            <form method="POST" action="/contacts/delete/{{ ct.contact_id }}" onsubmit="return confirm('Delete this contact?');">
+              <button type="submit" class="action-btn action-btn-delete">
+                <span class="material-symbols-outlined">delete</span>
+              </button>
+            </form>
           </div>
         </td>
       </tr>
@@ -91,8 +92,12 @@
             </select>
           </div>
           <div class="mb-3">
-            <label class="form-label">Contact Name *</label>
-            <input type="text" name="contact_name" class="form-control" required />
+            <label class="form-label">First Name *</label>
+            <input type="text" name="first_name" class="form-control" required />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Last Name *</label>
+            <input type="text" name="last_name" class="form-control" required />
           </div>
           <div class="mb-3">
             <label class="form-label">Job Title</label>
@@ -144,8 +149,12 @@
             </select>
           </div>
           <div class="mb-3">
-            <label class="form-label">Contact Name *</label>
-            <input type="text" name="contact_name" id="edit_name" class="form-control" required />
+            <label class="form-label">First Name *</label>
+            <input type="text" name="first_name" id="edit_firstname" class="form-control" required />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Last Name *</label>
+            <input type="text" name="last_name" id="edit_lastname" class="form-control" required />
           </div>
           <div class="mb-3">
             <label class="form-label">Job Title</label>
@@ -182,7 +191,8 @@
     const btn = event.relatedTarget;
     document.getElementById("editForm").action = "/contacts/edit/" + btn.dataset.id;
     document.getElementById("edit_company").value = btn.dataset.company;
-    document.getElementById("edit_name").value = btn.dataset.name;
+    document.getElementById("edit_firstname").value = btn.dataset.firstname;
+    document.getElementById("edit_lastname").value = btn.dataset.lastname;
     document.getElementById("edit_jobtitle").value = btn.dataset.jobtitle;
     document.getElementById("edit_email").value = btn.dataset.email;
     document.getElementById("edit_phone").value = btn.dataset.phone;
