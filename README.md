@@ -36,7 +36,7 @@ pip install -r requirements.txt
 
 - Open MySQL Workbench
 - Go to **Server** -> **Data Import**
-- Select **Import from Self-Contained File** and browse to `scheme.sql`
+- Select **Import from Self-Contained File** and browse to `schema.sql`
 - Click **Start Import** to create the database and load sample data
 
 ### 4. Configure the database connection
